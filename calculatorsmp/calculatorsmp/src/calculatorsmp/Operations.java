@@ -32,6 +32,10 @@ public class Operations {
     public static String Solve(String formula){
         Stack<String> tempStack = new Stack<>();//Store number or operator
         Stack<Character> operatorStack = new Stack<Character>();//Store operator
+        formula = formula.replace(" ","");
+        if (formula.matches(".*[\\+\\-\\*/]{2,}.*")) {
+            throw new IllegalArgumentException("Operadores consecutivos no están permitidos");
+        }
         int len = formula.length();
         int k = 0;
         for(int j = -1; j < len - 1; j++){
@@ -41,7 +45,7 @@ public class Operations {
                     tempStack.push(formula.substring(k));
                 }
                 else {
-                    if(k < j){
+                    if(k <= j){
                         tempStack.push(formula.substring(k, j + 1));
                     }
                     if(operatorStack.empty()){
@@ -64,6 +68,7 @@ public class Operations {
             tempStack.push(operatorStack.pop().toString());
         }
         Stack<String> calcStack = new Stack<>();
+        System.out.println(tempStack);
         for(String peekChar : tempStack){ // Reverse traversing of stack
             if(!peekChar.equals("+") && !peekChar.equals("-") && !peekChar.equals("/") && !peekChar.equals("*")) {
                 calcStack.push(peekChar); // Push number to stack
@@ -72,9 +77,11 @@ public class Operations {
                 int b1 = 0;
                 if(!calcStack.empty()){
                     b1 = Integer.parseInt(calcStack.pop());
+                    System.out.println(b1);
                 }
                 if(!calcStack.empty()){
                     a1 = Integer.parseInt(calcStack.pop());
+                    System.out.println(a1);
                 }
                 switch (peekChar) {
                     case "+":
@@ -87,6 +94,9 @@ public class Operations {
                         calcStack.push(String.valueOf(a1 * b1));
                         break;
                     default:
+                    	if (b1 == 0) {
+                            throw new ArithmeticException("Division por 0 es indeterminada");
+                        }
                         calcStack.push(String.valueOf(a1 / b1));
                         break;
                 }
